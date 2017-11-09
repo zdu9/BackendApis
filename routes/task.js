@@ -142,7 +142,8 @@ router.get('/:id', function(req,res) {
 
             deadline: req.body.deadline,
             completed: req.body.completed,
-
+            assignedUser: req.body.assignedUser,
+            assignedUserName: req.body.assignedUserName,
             dateCreated: req.body.dateCreated
             }
         task.findByIdAndUpdate(req.params.id, taskPost, {new: true},function(err, tasks)
@@ -165,7 +166,7 @@ router.get('/:id', function(req,res) {
                 });
             }else
             {
-                res.status(201).send({
+                res.status(200).send({
                     message: 'OK',
                     data: tasks
                 });
