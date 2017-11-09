@@ -56,17 +56,18 @@ router= express.Router(),
 
             dateCreated: req.body.dateCreated
            }
-        task.create(taskPost, function(err, tasks)
+
+        if (req.body.name===null || req.body.deadline===null){
+        res.status(404).send({
+            message: 'task could not be created without a name or deadline',
+            data:[]
+        });
+      }else{task.create(taskPost, function(err, tasks)
         {
             if (err){
                 res.status(500).send({
                     message: err,
                     data: []
-                });
-            }else if (req.body.name===null || req.body.deadline===null){
-                res.status(404).send({
-                    message: 'task could not be created without a name or deadline',
-                    data:[]
                 });
             }else{
                 res.status(201).send({
@@ -74,17 +75,46 @@ router= express.Router(),
                     data: tasks
                 });
             }
-        }) ;
+        }) ;}
+
     });
 
 router.get('/:id', function(req,res) {
-    task.findById(req.params.id, function (err, tasks) {
+
+    var query;
+    if (req.query.count && req.query.count=="true"){
+
+        query= task.count({});
+
+    }
+    else   query= task.findById({});
+
+    if (req.query.where){
+        query.where(JSON.parse(req.query.where));
+
+    }
+    if (req.query.sort){
+        query.sort(JSON.parse(req.query.sort));
+    }
+
+    if (req.query.select){
+        query.select(JSON.parse(req.query.select));
+    }
+
+    if (req.query.skip){
+        query.skip(req.query.skip)
+    }
+    if (req.query.limit){
+        query.limit(req.query.limit);
+    }
+
+    query.exec( function (err, tasks){
         if (err) {
             res.status(500).send({
                 message: err,
                 data: []
             });
-        } else if (users===null){
+        } else if (tasks===null){
             res.status(404).send({
                 message: 'Task does not exist ',
                 data:[]
@@ -95,8 +125,8 @@ router.get('/:id', function(req,res) {
                 data: tasks
             });
         }
-
     });
+
 });
 
     //update  cannot hardcode
@@ -112,7 +142,7 @@ router.get('/:id', function(req,res) {
 
             dateCreated: req.body.dateCreated
             }
-        task.findByIdAndUpdate(req.params.id, taskPost, function(err, tasks)
+        task.findByIdAndSave(req.params.id, taskPost, function(err, tasks)
         {
             if (err)
             {
@@ -120,12 +150,12 @@ router.get('/:id', function(req,res) {
                     message: err,
                     data: []
                 });
-            }else if (users===null){
+            }else if (tasks===null){
                 res.status(404).send({
                     message: 'Task does not exist ',
                     data:[]
                 })
-            }else if (req.body.name===null || req.body.dealine===null){
+            }else if (req.body.name===null || req.body.deadline===null){
                 res.status(404).send({
                     message: 'task could not be created without a name or deadline',
                     data:[]
@@ -148,7 +178,7 @@ router.delete('/:id', function(req,res)
                 message: err,
                 data: []
             });
-        }else if (users===null){
+        }else if (tasks===null){
             res.status(404).send({
                 message: 'Task does not exist ',
                 data:[]

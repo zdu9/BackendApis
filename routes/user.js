@@ -91,19 +91,47 @@ var express= require('express');
    });
 
    router.get('/:id', function(req, res){
-       user.findById(req.params.id, function(err, users){
-           if (err){
+
+       var query;
+       if (req.query.count && req.query.count=="true"){
+
+           query= user.count({});
+
+       }
+       else   query= task.findById({});
+
+       if (req.query.where){
+           query.where(JSON.parse(req.query.where));
+
+       }
+       if (req.query.sort){
+           query.sort(JSON.parse(req.query.sort));
+       }
+
+       if (req.query.select){
+           query.select(JSON.parse(req.query.select));
+       }
+
+       if (req.query.skip){
+           query.skip(Number(req.query.skip))
+       }
+       if (req.query.limit){
+           query.limit(Number(req.query.limit));
+       }
+
+       query.exec( function (err, users){
+           if (err) {
                res.status(500).send({
-                   massage: err,
-                   data:[]
+                   message: err,
+                   data: []
                });
-           }else{
+           } else {
                res.status(200).send({
-                   massage:'OK',
+                   message: 'OK',
                    data: users
-               })
+               });
            }
-       })
+       });
    });
    //update  cannot hardcode
    router.put('/:id', function(req,res){
