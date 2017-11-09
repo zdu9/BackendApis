@@ -116,7 +116,7 @@ router.get('/:id', function(req,res) {
                 message: err,
                 data: []
             });
-        } else if (tasks===null){
+        } else if (tasks==null){
             res.status(404).send({
                 message: 'Task does not exist ',
                 data:[]
@@ -152,7 +152,7 @@ router.get('/:id', function(req,res) {
                     message: err,
                     data: []
                 });
-            }else if (tasks===null){
+            }else if (tasks==null){
                 res.status(404).send({
                     message: 'Task does not exist ',
                     data:[]
@@ -180,7 +180,7 @@ router.delete('/:id', function(req,res)
                 message: err,
                 data: []
             });
-        }else if (tasks===null){
+        }else if (tasks==null){
             res.status(404).send({
                 message: 'Task does not exist ',
                 data:[]

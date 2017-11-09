@@ -125,7 +125,7 @@ var express= require('express');
                    message: err,
                    data: []
                });
-           }else if (users===null){
+           }else if (users==null){
                res.status(404).send({
                    message: "not found",
                    data:[]
@@ -168,7 +168,7 @@ var express= require('express');
                                message: err,
                                data: []
                            });
-                       } else if (users === null) {
+                       } else if (users == null) {
                            res.status(404).send({
                                message: 'User does not exist ',
                                data: []
@@ -194,7 +194,7 @@ var express= require('express');
                    message: err,
                    data: []
                });
-           }else if (users===null){
+           }else if (users==null){
                res.status(404).send({
                    message: 'User does not exist ',
                    data:[]
@@ -219,7 +219,7 @@ var express= require('express');
                    data: []
                });
 
-           }else if (users===null){
+           }else if (users==null){
                res.status(404).send({
                    message: 'User does not exist ',
                    data:[]
@@ -243,7 +243,7 @@ var express= require('express');
                          data:[]
                      });
                  }else if (req.body.name===null || req.body.deadline===null){
-                     res.status(404).send({
+                     res.status(400).send({
                          message: 'task could not be created without a name or deadline',
                          data:[]
                      });
