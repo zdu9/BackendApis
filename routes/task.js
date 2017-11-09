@@ -3,7 +3,34 @@ router= express.Router(),
     user= require('../models/UserSchema');
     task= require('../models/TaskSchema');
     router.get('/', function(req,res) {
-        task.find({}, function (err, tasks) {
+       var query;
+        if (req.query.count && req.query.count=="true"){
+
+            query= user.count({});
+
+        }
+        else   query= task.find({});
+
+        if (req.query.where){
+            query.where(JSON.parse(req.query.where));
+
+        }
+        if (req.query.sort){
+            query.sort(JSON.parse(req.query.sort));
+        }
+
+        if (req.query.select){
+            query.select(JSON.parse(req.query.select));
+        }
+
+        if (req.query.skip){
+            query.skip(req.query.skip)
+        }
+        if (req.query.limit){
+            query.limit(req.query.limit);
+        }
+
+        query.exec( function (err, tasks){
             if (err) {
                 res.status(500).send({
                     message: err,
@@ -15,7 +42,6 @@ router= express.Router(),
                     data: tasks
                 });
             }
-
         });
     });
     router.post('/', function(req,res)
@@ -37,6 +63,11 @@ router= express.Router(),
                     message: err,
                     data: []
                 });
+            }else if (req.body.name===null || req.body.deadline===null){
+                res.status(404).send({
+                    message: 'task could not be created without a name or deadline',
+                    data:[]
+                });
             }else{
                 res.status(201).send({
                     message: 'OK',
@@ -53,7 +84,12 @@ router.get('/:id', function(req,res) {
                 message: err,
                 data: []
             });
-        } else {
+        } else if (users===null){
+            res.status(404).send({
+                message: 'Task does not exist ',
+                data:[]
+            })
+        }else {
             res.status(200).send({
                 message: 'OK',
                 data: tasks
@@ -84,6 +120,16 @@ router.get('/:id', function(req,res) {
                     message: err,
                     data: []
                 });
+            }else if (users===null){
+                res.status(404).send({
+                    message: 'Task does not exist ',
+                    data:[]
+                })
+            }else if (req.body.name===null || req.body.dealine===null){
+                res.status(404).send({
+                    message: 'task could not be created without a name or deadline',
+                    data:[]
+                });
             }else
             {
                 res.status(201).send({
@@ -102,6 +148,11 @@ router.delete('/:id', function(req,res)
                 message: err,
                 data: []
             });
+        }else if (users===null){
+            res.status(404).send({
+                message: 'Task does not exist ',
+                data:[]
+            })
         }else{
             res.status(201).send({
                 message: 'resources deleted',

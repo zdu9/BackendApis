@@ -4,7 +4,35 @@ var express= require('express');
     task= require('../models/TaskSchema');
    router.get('/', function(req,res)
    {
-       user.find({}, function (err, users) {
+
+       var query;
+       if (req.query.count && req.query.count=="true"){
+
+           query= user.count({});
+
+       }
+       else   query= task.find({});
+
+       if (req.query.where){
+           query.where(JSON.parse(req.query.where));
+
+       }
+       if (req.query.sort){
+           query.sort(JSON.parse(req.query.sort));
+       }
+
+       if (req.query.select){
+           query.select(JSON.parse(req.query.select));
+       }
+
+       if (req.query.skip){
+           query.skip(Number(req.query.skip))
+       }
+       if (req.query.limit){
+           query.limit(Number(req.query.limit));
+       }
+
+       query.exec( function (err, users){
            if (err) {
                res.status(500).send({
                    message: err,
@@ -16,29 +44,50 @@ var express= require('express');
                    data: users
                });
            }
-
        });
    });
    router.post('/', function(req,res){
+
        var userPost= {
            name: req.body.name,
            email: req.body.email,
            pendingTasks: req.body.pendingTasks,
            dateCreated: req.body.dateCreated
        };
-       user.create(userPost, function(err, users){
-           if (err){
-               res.status(500).send({
-                   message: err,
-                   data: []
+       user.count({email: req.body.email}, function (err, count){
+           if(count>0){
+               res.status(400).send({
+                   message: 'email already exist',
+                   data:[]
                });
-           }else{
-               res.status(201).send({
-                   message: 'OK',
-                   data: users
+           }else
+               {
+               if (req.body.name===null || req.body.email===null) {
+                   res.status(400).send({
+                       message: 'user could not be created without a name or email',
+                       data: []
+                   });
+               }else
+                   {user.create(userPost, function(err, users)
+               {
+                   if (err){
+                       res.status(500).send({
+                           message: err,
+                           data: []
+                       });
+                   }
+                   else{
+                       res.status(201).send({
+                           message: 'OK',
+                           data: users
+                       });
+                       }
                });
+                     }
+
            }
        });
+
    });
 
    router.get('/:id', function(req, res){
@@ -64,19 +113,44 @@ var express= require('express');
            //pendingTasks: req.body.pendingTasks,
                dateCreated: req.body.dateCreated
        }
-       user.findByIdAndUpdate(req.params.id, userPost, function(err, users){
-           if (err){
-               res.status(500).send({
-                   message: err,
-                   data: []
-               });
-           }else{
-               res.status(201).send({
-                   message: 'OK',
-                   data: users
-               });
-           }
-       });
+       if (req.body.name===null || req.body.email===null){
+           res.status(400).send({
+               message: 'user could not be updated without a name or email',
+               data:[]
+           });
+       }
+       else{
+           user.count({email: req.body.email}, function (err, count) {
+               if (count > 0) {
+                   res.status(400).send({
+                       message: 'email already exist',
+                       data: []
+                   });
+               }
+               else {
+                   user.findByIdAndSave(req.params.id, userPost, function (err, users) {
+                       if (err) {
+                           res.status(500).send({
+                               message: err,
+                               data: []
+                           });
+                       } else if (users === null) {
+                           res.status(404).send({
+                               message: 'User does not exist ',
+                               data: []
+                           })
+                       } else {
+                           res.status(200).send({
+                               message: 'OK',
+                               data: users
+                           });
+                       }
+                   });
+               }
+
+           });
+       }
+
    });
 
    router.delete('/:id', function(req,res){
@@ -86,8 +160,13 @@ var express= require('express');
                    message: err,
                    data: []
                });
+           }else if (users===null){
+               res.status(404).send({
+                   message: 'User does not exist ',
+                   data:[]
+               })
            }else{
-               res.status(201).send({
+               res.status(200).send({
                    message: 'resources deleted',
                    data:[]
                });
@@ -106,6 +185,11 @@ var express= require('express');
                    data: []
                });
 
+           }else if (users===null){
+               res.status(404).send({
+                   message: 'User does not exist ',
+                   data:[]
+               })
            }else{
 
                var taskPost= {
@@ -122,6 +206,11 @@ var express= require('express');
                  if (err){
                      res.status(500).send({
                          message: err,
+                         data:[]
+                     });
+                 }else if (req.body.name===null || req.body.deadline===null){
+                     res.status(404).send({
+                         message: 'task could not be created without a name or deadline',
                          data:[]
                      });
                  }else{
