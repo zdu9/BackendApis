@@ -6,7 +6,7 @@ router= express.Router(),
        var query;
         if (req.query.count && req.query.count=="true"){
 
-            query= user.count({});
+            query= task.count({});
 
         }
         else   query= task.find({});
@@ -58,7 +58,7 @@ router= express.Router(),
             dateCreated: req.body.dateCreated
            }
 
-        if (req.body.name===null || req.body.deadline===null){
+        if (req.body.name==null || req.body.deadline==null){
         res.status(400).send({
             message: 'task could not be created without a name or deadline',
             data:[]
@@ -77,7 +77,8 @@ router= express.Router(),
                     data: tasks
                 });
             }
-        }) ;}
+        }) ;
+        }
 
     });
 

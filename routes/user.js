@@ -11,7 +11,7 @@ var express= require('express');
            query= user.count({});
 
        }
-       else   query= task.find({});
+       else   query= user.find({});
 
        if (req.query.where){
            query.where(JSON.parse(req.query.where));
@@ -54,7 +54,7 @@ var express= require('express');
            pendingTasks: req.body.pendingTasks,
            dateCreated: req.body.dateCreated
        };
-       user.count({email: req.body.email}, function (err, count){
+       user.count({'email': req.body.email}, function (err, count){
            if(count>0){
                res.status(400).send({
                    message: 'email already exist',
