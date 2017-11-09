@@ -1,12 +1,12 @@
-var express= require('express');
+var express= require('express'),
     router= express.Router(),
-    user= require('../models/UserSchema');
+    user= require('../models/UserSchema'),
     task= require('../models/TaskSchema');
    router.get('/', function(req,res)
    {
 
        var query;
-       if (req.query.count && req.query.count=="true"){
+       if (req.query.count=="true"){
 
            query= user.count({});
 
@@ -46,47 +46,50 @@ var express= require('express');
            }
        });
    });
-   router.post('/', function(req,res){
+   router.post('/', function(req,res) {
 
-       var userPost= {
+       var userPost = {
            name: req.body.name,
            email: req.body.email,
            pendingTasks: req.body.pendingTasks,
            dateCreated: req.body.dateCreated
        };
-       user.count({'email': req.body.email}, function (err, count){
-           if(count>0){
-               res.status(400).send({
-                   message: 'email already exist',
-                   data:[]
-               });
-           }else
-               {
-               if (req.body.name===null || req.body.email===null) {
+       if (req.body.name == null || req.body.email == null) {
+           res.status(400).send({
+               message: 'user could not be created without a name or email',
+               data: []
+           });
+       }
+       else {
+           user.count({'email': req.body.email}, function (err, num) {
+               if (num > 0) {
                    res.status(400).send({
-                       message: 'user could not be created without a name or email',
+                       message: 'email already exist',
                        data: []
                    });
-               }else
-                   {user.create(userPost, function(err, users)
-               {
-                   if (err){
-                       res.status(500).send({
-                           message: err,
-                           data: []
-                       });
-                   }
-                   else{
-                       res.status(201).send({
-                           message: 'OK',
-                           data: users
-                       });
-                       }
-               });
-                     }
+               }
 
-           }
-       });
+               else {
+                   user.create(userPost, function (err, users) {
+                       if (err) {
+                           res.status(500).send({
+                               message: err,
+                               data: []
+                           });
+                       }
+                       else {
+                           res.status(201).send({
+                               message: 'OK',
+                               data: users
+                           });
+                       }
+                   });
+               }
+
+
+           });
+       }
+
 
    });
 

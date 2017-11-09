@@ -1,10 +1,10 @@
-var express= require('express');
+var express= require('express'),
 router= express.Router(),
-    user= require('../models/UserSchema');
+    user= require('../models/UserSchema'),
     task= require('../models/TaskSchema');
     router.get('/', function(req,res) {
        var query;
-        if (req.query.count && req.query.count=="true"){
+        if (req.query.count=="true"){
 
             query= task.count({});
 
