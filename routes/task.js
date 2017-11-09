@@ -145,7 +145,7 @@ router.get('/:id', function(req,res) {
 
             dateCreated: req.body.dateCreated
             }
-        task.findByIdAndSave(req.params.id, taskPost, function(err, tasks)
+        task.findByIdAndUpdate(req.params.id, taskPost, {new: true},function(err, tasks)
         {
             if (err)
             {
@@ -187,7 +187,7 @@ router.delete('/:id', function(req,res)
                 data:[]
             })
         }else{
-            res.status(201).send({
+            res.status(200).send({
                 message: 'resources deleted',
                 data:[]
             });
