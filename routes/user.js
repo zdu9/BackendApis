@@ -142,6 +142,7 @@ var express= require('express'),
            }
        });
    });
+
    //update  cannot hardcode
    router.put('/:id', function(req,res){
        var userPost ={
