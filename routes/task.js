@@ -89,7 +89,7 @@ router.get('/:id', function(req,res) {
         query= task.count({});
 
     }
-    else   query= task.findById({});
+    else   query= task.findById(req.params.id, {});
 
     if (req.query.where){
         query.where(JSON.parse(req.query.where));
@@ -158,7 +158,7 @@ router.get('/:id', function(req,res) {
                     data:[]
                 })
             }else if (req.body.name===null || req.body.deadline===null){
-                res.status(404).send({
+                res.status(400).send({
                     message: 'task could not be created without a name or deadline',
                     data:[]
                 });
