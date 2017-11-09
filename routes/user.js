@@ -125,7 +125,13 @@ var express= require('express');
                    message: err,
                    data: []
                });
-           } else {
+           }else if (users===null){
+               res.status(404).send({
+                   message: "not found",
+                   data:[]
+               });
+           }
+           else {
                res.status(200).send({
                    message: 'OK',
                    data: users

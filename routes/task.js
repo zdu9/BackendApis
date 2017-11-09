@@ -53,16 +53,18 @@ router= express.Router(),
 
             deadline: req.body.deadline,
             completed: req.body.completed,
-
+            assignedUser: req.body.assignedUser,
+            assignedUserName: req.body.assignedUserName,
             dateCreated: req.body.dateCreated
            }
 
         if (req.body.name===null || req.body.deadline===null){
-        res.status(404).send({
+        res.status(400).send({
             message: 'task could not be created without a name or deadline',
             data:[]
         });
-      }else{task.create(taskPost, function(err, tasks)
+      }else{
+            task.create(taskPost, function(err, tasks)
         {
             if (err){
                 res.status(500).send({
