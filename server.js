@@ -8,9 +8,13 @@ var express = require('express'),
 // Create our Express application
 var app = express();
 
+var user= require('./routes/user');
+var task= require('./routes/task');
+
 // Use environment defined port or 3000
 var port = process.env.PORT || 3000;
 
+console.log('todo list RESTful API server started on: ' + port);
 // Connect to a MongoDB
 mongoose.connect(secrets.mongo_connection, { useMongoClient: true});
 
@@ -29,6 +33,11 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+app.use('/api/users', user);
+app.use('/api/tasks', task);
+app.get("/", function(req,res){
+    res.send("getTest!") ;
+})
 // Use routes as a module (see index.js)
 require('./routes')(app, router);
 
