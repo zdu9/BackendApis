@@ -154,7 +154,7 @@ var express= require('express');
            });
        }
        else{
-           user.count({email: req.body.email}, function (err, count) {
+           user.count({ "email": req.body.email}, function (err, count) {
                if (count > 0) {
                    res.status(400).send({
                        message: 'email already exist',
@@ -162,7 +162,7 @@ var express= require('express');
                    });
                }
                else {
-                   user.findByIdAndSave(req.params.id, userPost, function (err, users) {
+                   user.findByIdAndUpdate(req.params.id, userPost, {new: true}, function (err, users) {
                        if (err) {
                            res.status(500).send({
                                message: err,
