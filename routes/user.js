@@ -98,7 +98,7 @@ var express= require('express');
            query= user.count({});
 
        }
-       else   query= task.findById(req.params.id, {});
+       else   query= user.findById(req.params.id, {});
 
        if (req.query.where){
            query.where(JSON.parse(req.query.where));
