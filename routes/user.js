@@ -98,7 +98,7 @@ var express= require('express'),
        var query;
        if (req.query.count && req.query.count=="true"){
 
-           query= user.count({});
+           query= user.count({'_id': req.params.id});
 
        }
        else   query= user.findById(req.params.id, {});

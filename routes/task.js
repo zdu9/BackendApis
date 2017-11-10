@@ -87,7 +87,7 @@ router.get('/:id', function(req,res) {
     var query;
     if (req.query.count && req.query.count=="true"){
 
-        query= task.count({});
+        query= task.count({'_id': req.params.id});
 
     }
     else   query= task.findById(req.params.id, {});
